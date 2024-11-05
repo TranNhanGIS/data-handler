@@ -1,5 +1,6 @@
 from shapely import wkb, Point
 import pandas as pd
+import math
 import os
 
 # Convert WKB Hexadecimal in the 'geom' field
@@ -10,15 +11,10 @@ def convert_wkb_to_lat_lng(geom_hex):
     else:
         point = geometry
 
-    if point is not None and hasattr(point, 'x') and hasattr(point, 'y'):
-        return pd.Series({'lat': point.y, 'lng': point.x})
+    if not point.is_empty and hasattr(point, 'x') and hasattr(point, 'y'):
+        return pd.Series({'lat': round(point.y, 6), 'lng': round(point.x, 6)})
     else:
         return pd.Series({'lat': None, 'lng': None})
-    
-# Create WKB from lat, lng
-def create_wkb_from_lat_lng(lat, lng):
-    point = Point(lng, lat)
-    return wkb.dumps(point, hex=True)
     
 # Get files from directory
 def get_files(directory, extension):
